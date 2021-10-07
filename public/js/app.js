@@ -2188,18 +2188,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      messages: []
+      messages: [],
+      scrolledToBottom: true
     };
+  },
+  updated: function updated() {
+    if (this.scrolledToBottom) {
+      this.scroll();
+    }
   },
   mounted: function mounted() {
     var _this = this;
 
+    this.scroll();
     axios.get('/messages').then(function (response) {
       _this.messages = response.data.reverse();
     });
     _event_js__WEBPACK_IMPORTED_MODULE_0__["default"].$on('message.created', function (message) {
       _this.messages.push(message);
     });
+  },
+  methods: {
+    'scroll': function scroll() {
+      var messagesContainer = document.querySelector('div.messages');
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    },
+    'scrollHandler': function scrollHandler(el) {
+      this.scrolledToBottom = el.target.offsetHeight + el.target.scrollTop >= el.target.scrollHeight;
+    }
   }
 });
 
@@ -44919,7 +44935,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "card h-100 messages" },
+    { staticClass: "card h-100 messages", on: { scroll: _vm.scrollHandler } },
     _vm._l(_vm.messages, function(message) {
       return _c("chat-message-component", {
         key: message.id,
