@@ -20,4 +20,11 @@ class MessagesService
             'body' => $request->body
         ]);
     }
+
+    public function storeSystemMessage(string $body)
+    {
+        return Message::create([
+            'body' => $body
+        ]);
+    }
 }

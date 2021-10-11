@@ -14,10 +14,6 @@ class Message extends Model
         'body',
     ];
 
-    protected $appends = [
-        'selfMessage',
-    ];
-
     protected $casts = [
         'created_at'  => 'datetime:M j, H:i:s',
     ];
@@ -27,8 +23,4 @@ class Message extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getSelfMessageAttribute()
-    {
-        return $this->user_id === auth()->user()->id;
-    }
 }

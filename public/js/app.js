@@ -2156,8 +2156,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['message']
+  props: ['message'],
+  computed: {
+    userIsNull: function userIsNull() {
+      return !this.message.user ? true : false;
+    }
+  }
 });
 
 /***/ }),
@@ -44904,8 +44910,10 @@ var render = function() {
         _vm._v(_vm._s(_vm.message.created_at))
       ]),
       _vm._v(" "),
-      _c("strong", [_vm._v(_vm._s(_vm.message.user.name))]),
-      _vm._v(":\n        "),
+      _vm.userIsNull
+        ? _c("strong", [_vm._v("Бот: ")])
+        : _c("strong", [_vm._v(_vm._s(_vm.message.user.name) + ": ")]),
+      _vm._v(" "),
       _c("span", { staticClass: "body" }, [_vm._v(_vm._s(_vm.message.body))])
     ])
   ])
