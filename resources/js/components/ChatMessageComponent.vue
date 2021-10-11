@@ -2,7 +2,8 @@
     <div class="message">
         <p>
             <small class="text-muted">{{ message.created_at }}</small>
-            <strong>{{ message.user.name }}</strong>:
+            <strong v-if="userIsNull">Бот: </strong>
+            <strong v-else>{{ message.user.name }}: </strong>
             <span class="body">{{ message.body }}</span>
         </p>
     </div>
@@ -10,6 +11,13 @@
 
 <script>
     export default {
-        props: ['message']
+        props: [
+            'message'
+        ],
+        computed: {
+            userIsNull: function() {
+                return (! this.message.user) ? true : false;
+            }
+        }
     }
 </script>
