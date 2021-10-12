@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Services\BotService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Redis;
-use App\Services\MessagesService;
 
 class Tick extends Command
 {
@@ -39,8 +39,10 @@ class Tick extends Command
      */
     public function handle()
     {
-        Redis::subscribe([env('TIMER_CHANNEL', 'TIMER')], function ($message) {
-            (new MessagesService)->storeSystemMessage($message);
+        $bot = new BotService();
+        Redis::subscribe([env('TIMER_CHANNEL', 'TIMER')], function ($message) use ($bot) {
+            $bot->tick();
+            echo 'tick';
         });
 
     }
