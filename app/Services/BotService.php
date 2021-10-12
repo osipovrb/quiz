@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Services\MessagesService;
-use App\Services\QuestionsService;
+use App\Services\QuestionService;
 
 class BotService
 {
@@ -13,14 +13,14 @@ class BotService
         10 => 2,
     ];
 
-    private QuestionsService $question;
+    private QuestionService $question;
     private MessagesService $messages;
 
     private int $timer;
 
     public function __construct()
     {
-        $this->question = new QuestionsService(count(self::HINTS_TIMING));
+        $this->question = new QuestionService(count(self::HINTS_TIMING));
         $this->messages = new MessagesService;
         $this->timer = self::ROUND_TIME;
     }
@@ -30,17 +30,13 @@ class BotService
         switch ($this->timer) {
             case 0:
                 $this->noAnswer();
-                $timer = self::ROUND_TIME;
+                $this->timer = self::ROUND_TIME;
                 break;
             case (in_array($this->timer, array_keys(self::HINTS_TIMING))):
                 $this->hint(self::HINTS_TIMING[$this->timer]);
                 break;
         }
-        ;
-        if ($this->timer-- == 0) {
-            $this->timer = self::ROUND_TIME;
-        }
-        echo $this->timer;
+        $this->timer--;
     }
 
     public function noAnswer()
@@ -52,13 +48,13 @@ class BotService
 
     public function hint(int $hintNum)
     {
-        $msg = 'Подсказка #1: ' . $hintNum . ': ' . $this->question->getHint($hintNum);
+        $msg = 'Подсказка: ' . $this->question->hints[$hintNum - 1];
         $this->messages->storeSystemMessage($msg);
     }
 
     public function nextQuestion()
     {
-        $this->question->pickRandom();
+        $this->question->random();
         $msg = 'Внимание, вопрос! ' . $this->question->question;
         $this->messages->storeSystemMessage($msg);
     }

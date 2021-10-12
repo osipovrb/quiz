@@ -42,7 +42,6 @@ class Tick extends Command
         $bot = new BotService();
         Redis::subscribe([env('TIMER_CHANNEL', 'TIMER')], function ($message) use ($bot) {
             $bot->tick();
-            echo 'tick';
         });
 
     }
