@@ -16,7 +16,7 @@ class Hint
         $this->hintCount = $hintCount;
     }
 
-    public function makeKeys(): array
+    public function makeHintedKeys(): array
     {
         $unhintedKeys = array_diff(array_keys($this->answer), $this->hintedKeys);
         if (!is_null($unhintedKeys) && count($unhintedKeys) >= $this->hintCount) {

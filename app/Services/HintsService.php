@@ -27,7 +27,7 @@ class HintsService
         $hintingLettersCount = ceil(count($this->answer) * 0.5 / $hintsCount);
         for ($i = 0; $i < $hintsCount; $i++) {
             $hint = new Hint($this->answer, $this->hintedKeys, $hintingLettersCount);
-            $this->hintedKeys = $hint->makeKeys();
+            $this->hintedKeys = $hint->makeHintedKeys();
             $this->hints[] = $hint->render();
         }
         return $this;
