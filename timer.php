@@ -30,9 +30,10 @@ class Ticker
         $redis = new Redis();
         $redis->pconnect($this->config['REDIS_HOST'], $this->config['REDIS_PORT']);
         $redis->auth($this->config['REDIS_PASSWORD']);
+        $channel = $this->config['REDIS_PREFIX'].$this->config['TIMER_CHANNEL'];
 
         for ($i = 1; true; ++$i) {
-            $redis->publish($this->config['REDIS_PREFIX'].$this->config['TIMER_CHANNEL'], self::TICK_MESSAGE);
+            $redis->publish($channel, self::TICK_MESSAGE);
             time_sleep_until($start + $i);
         }
 
