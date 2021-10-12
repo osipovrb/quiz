@@ -41,6 +41,8 @@ $ npm run dev
 ### Запуск сервера
 ```shell
 $ php artisan serve
+$ php artisan ticker:listen
+$ php ./ticker.php
 ```
 Перейдите по адресу http://127.0.0.1:8000
 ### Готово!
