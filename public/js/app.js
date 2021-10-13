@@ -2353,8 +2353,8 @@ window.axios.defaults.headers.common['X-CSRF-TOKEN'] = document.head.querySelect
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "6b9c2ef535766025c6b7",
-  cluster: "eu",
+  key: "217d928028939e6440805268cb611399",
+  cluster: "",
   forceTLS: true
 });
 

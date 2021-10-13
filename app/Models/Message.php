@@ -23,4 +23,9 @@ class Message extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function toRedis(): string
+    {
+        return 'answer:' . json_encode($this);
+    }
+
 }
