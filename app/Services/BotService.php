@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Message;
+use App\Models\User;
 use App\Services\MessagesService;
 use App\Services\QuestionService;
 
@@ -57,6 +59,17 @@ class BotService
         $this->question->random();
         $msg = 'Внимание, вопрос! ' . $this->question->question;
         $this->messages->storeSystemMessage($msg);
+    }
+
+    public function checkAnswer($answer): bool
+    {
+        if (!is_null($answer->user) && $answer->body === $this->question->answer) {
+            $msg = $answer->user->name . ', верно! Ваш ответ "' . $this->question->answer . '" верный! Переходим к следующему вопросу...';
+            $this->messages->storeSystemMessage($msg);
+            $this->nextQuestion();
+            return true;
+        }
+        return false;
     }
 
 }

@@ -41,8 +41,12 @@ class Tick extends Command
     {
         $bot = new BotService();
         Redis::subscribe([env('TIMER_CHANNEL', 'TIMER')], function ($message) use ($bot) {
-            $bot->tick();
+            if (str_starts_with($message, 'answer:')) {
+                $msg = explode(':', $message, 2)[1];
+                $bot->checkAnswer(json_decode($msg));
+            } else {
+                $bot->tick();
+            }
         });
-
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class MessagesService
 {
@@ -16,14 +17,15 @@ class MessagesService
 
     public function storeMessage(Request $request)
     {
-        return $request->user()->messages()->create([
+        $msg = $request->user()->messages()->create([
             'body' => $request->body
         ]);
+        Redis::publish(env('TIMER_CHANNEL', 'TIMER'), $msg->toRedis());
     }
 
     public function storeSystemMessage(string $body)
     {
-        return Message::create([
+        Message::create([
             'body' => $body
         ]);
     }
