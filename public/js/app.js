@@ -2354,8 +2354,11 @@ window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/d
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
   key: "217d928028939e6440805268cb611399",
-  cluster: "",
-  forceTLS: true
+  wsHost: window.location.hostname,
+  wsPort: 6001,
+  forceTLS: false,
+  disableStats: true,
+  enabledTransports: ['ws', 'wss']
 });
 
 __webpack_require__(/*! ./chat.js */ "./resources/js/chat.js");
