@@ -41,6 +41,8 @@ $ npm run dev
 ### Запуск сервера
 ```shell
 $ php artisan serve
+$ php aritsan queue:listen
+$ php artisan websockets:serve
 $ php artisan ticker:listen
 $ php ./ticker.php
 ```
