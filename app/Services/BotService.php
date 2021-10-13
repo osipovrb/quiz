@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Services\MessagesService;
 use App\Services\QuestionService;
+use App\Events\ScoreUpdated;
 
 class BotService
 {
@@ -28,7 +29,7 @@ class BotService
     {
         $this->question = new QuestionService(count(self::HINTS_TIMING));
         $this->messages = new MessagesService;
-        $this->timer = self::ROUND_TIME;
+        $this->nextQuestion();
     }
 
     public function tick()
@@ -36,7 +37,6 @@ class BotService
         switch ($this->timer) {
             case 0:
                 $this->noAnswer();
-                $this->timer = self::ROUND_TIME;
                 break;
             case (in_array($this->timer, array_keys(self::HINTS_TIMING))):
                 $this->hint(self::HINTS_TIMING[$this->timer]);
@@ -60,6 +60,7 @@ class BotService
 
     public function nextQuestion()
     {
+        $this->timer = self::ROUND_TIME;
         $this->question->random();
         $msg = 'Внимание, вопрос! ' . $this->question->question;
         $this->messages->storeSystemMessage($msg);
@@ -85,12 +86,13 @@ class BotService
         $user->save();
         $msg = $user->name . ' заработал очков: ' . $reward;
         $this->messages->storeSystemMessage($msg);
+        ScoreUpdated::dispatch($user);
     }
 
     public function currentReward(): int
     {
         foreach (self::SCORE_TIMING as $time => $score) {
-            if ($this->timer > $time) {
+            if ($this->timer >= $time) {
                 return $score;
             }
         }

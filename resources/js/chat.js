@@ -12,4 +12,7 @@ Echo.join('chat')
     })
     .listen('MessageCreated', (data) => {
         Event.$emit('message.created', data.message);
+    })
+    .listen('ScoreUpdated', (data) => {
+        Event.$emit('users.score', data.user);
     });

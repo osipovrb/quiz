@@ -12,6 +12,6 @@ class MessageObserver
 
     public function created(Message $message)
     {
-        broadcast(new MessageCreated($message));
+        MessageCreated::dispatch($message);
     }
 }

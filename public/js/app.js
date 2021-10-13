@@ -2299,7 +2299,18 @@ __webpack_require__.r(__webpack_exports__);
       _this.users = _this.users.filter(function (u) {
         return u.id != user.id;
       });
+    }).$on('users.score', function (user) {
+      _this.users.find(function (u) {
+        return u.id === user.id;
+      }).score = user.score;
     });
+  },
+  computed: {
+    sortedUsers: function sortedUsers() {
+      return this.users.sort(function (a, b) {
+        return a.score < b.score;
+      });
+    }
   }
 });
 
@@ -2383,6 +2394,8 @@ Echo.join('chat').here(function (users) {
   _event__WEBPACK_IMPORTED_MODULE_0__["default"].$emit('users.left', user);
 }).listen('MessageCreated', function (data) {
   _event__WEBPACK_IMPORTED_MODULE_0__["default"].$emit('message.created', data.message);
+}).listen('ScoreUpdated', function (data) {
+  _event__WEBPACK_IMPORTED_MODULE_0__["default"].$emit('users.score', data.user);
 });
 
 /***/ }),
@@ -44982,7 +44995,9 @@ var render = function() {
   return _c("li", { staticClass: "list-group-item" }, [
     _c("span", [_vm._v(_vm._s(_vm.user.name))]),
     _vm._v(" "),
-    _c("span", { staticClass: "float-right text-muted" }, [_vm._v("0")])
+    _c("span", { staticClass: "float-right text-muted" }, [
+      _vm._v(_vm._s(_vm.user.score))
+    ])
   ])
 }
 var staticRenderFns = []
@@ -45015,7 +45030,7 @@ var render = function() {
       _c(
         "ul",
         { staticClass: "list-group list-group-flush" },
-        _vm._l(_vm.users, function(user) {
+        _vm._l(_vm.sortedUsers, function(user) {
           return _c("user-component", { key: user.id, attrs: { user: user } })
         }),
         1

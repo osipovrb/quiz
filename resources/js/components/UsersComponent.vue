@@ -7,7 +7,7 @@
             </div>
             <ul class="list-group list-group-flush">
                 <user-component
-                    v-for="user in users"
+                    v-for="user in sortedUsers"
                     :key="user.id"
                     :user="user">
                 </user-component>
@@ -36,9 +36,19 @@ export default {
         })
         .$on('users.left', (user) => {
             this.users = this.users.filter(u => {
-                return u.id != user.id
+                return u.id != user.id;
             });
-        });
+        })
+        .$on('users.score', (user) => {
+            this.users.find((u) => u.id === user.id).score = user.score;
+        })
+    },
+
+    computed: {
+        sortedUsers: function() {
+            return this.users.sort((a, b) => a.score > b.score);
+        }
     }
+
 }
 </script>
