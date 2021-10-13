@@ -17,7 +17,7 @@
 </template>
 
 <script>
-    import Event from '../event.js';
+import Event from '../event.js';
 
 export default {
 
