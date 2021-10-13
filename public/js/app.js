@@ -2161,7 +2161,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ['message'],
   computed: {
     userIsNull: function userIsNull() {
-      return !this.message.user ? true : false;
+      return !this.message.user;
     }
   }
 });
@@ -2308,7 +2308,7 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     sortedUsers: function sortedUsers() {
       return this.users.sort(function (a, b) {
-        return a.score < b.score;
+        return a.score > b.score;
       });
     }
   }
