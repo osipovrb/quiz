@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Message;
 use App\Models\User;
 use App\Services\MessagesService;
 use App\Services\QuestionService;
@@ -13,6 +12,11 @@ class BotService
     const HINTS_TIMING = [
         20 => 1,
         10 => 2,
+    ];
+    const SCORE_TIMING = [
+        20 => 3,
+        10 => 2,
+        0 => 1,
     ];
 
     private QuestionService $question;
@@ -64,12 +68,33 @@ class BotService
     public function checkAnswer($answer): bool
     {
         if (!is_null($answer->user) && $answer->body === $this->question->answer) {
-            $msg = $answer->user->name . ', верно! Ваш ответ "' . $this->question->answer . '" верный! Переходим к следующему вопросу...';
+            $msg = $answer->user->name . ', верно! Ваш ответ "' . $this->question->answer . '" верный!';
             $this->messages->storeSystemMessage($msg);
+            $this->awardUser($answer->user->id);
             $this->nextQuestion();
             return true;
         }
         return false;
+    }
+
+    public function awardUser(int $userId)
+    {
+        $reward = $this->currentReward();
+        $user = User::find($userId);
+        $user->score += $reward;
+        $user->save();
+        $msg = $user->name . ' заработал очков: ' . $reward;
+        $this->messages->storeSystemMessage($msg);
+    }
+
+    public function currentReward(): int
+    {
+        foreach (self::SCORE_TIMING as $time => $score) {
+            if ($this->timer > $time) {
+                return $score;
+            }
+        }
+        return 0;
     }
 
 }
