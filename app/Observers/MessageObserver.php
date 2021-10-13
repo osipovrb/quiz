@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Message;
 use App\Events\MessageCreated;
+use Illuminate\Support\Facades\Redis;
 
 class MessageObserver
 {

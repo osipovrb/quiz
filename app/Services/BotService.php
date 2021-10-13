@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Message;
+use App\Models\User;
 use App\Services\MessagesService;
 use App\Services\QuestionService;
 
