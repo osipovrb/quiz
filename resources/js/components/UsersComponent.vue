@@ -46,7 +46,14 @@ export default {
 
     computed: {
         sortedUsers: function() {
-            return this.users.sort((a, b) => a.score > b.score);
+            function compare(a, b) {
+                if (a.score > b.score)
+                    return -1;
+                if (a.score < b.score)
+                    return 1;
+                return 0;
+            }
+            return this.users.sort(compare);
         }
     }
 

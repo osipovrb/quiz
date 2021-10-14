@@ -2307,9 +2307,13 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     sortedUsers: function sortedUsers() {
-      return this.users.sort(function (a, b) {
-        return a.score > b.score;
-      });
+      function compare(a, b) {
+        if (a.score > b.score) return -1;
+        if (a.score < b.score) return 1;
+        return 0;
+      }
+
+      return this.users.sort(compare);
     }
   }
 });
