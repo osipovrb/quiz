@@ -5,11 +5,13 @@ namespace App\Services;
 use App\Models\User;
 use App\Services\MessagesService;
 use App\Services\QuestionService;
+use App\Services\ChatService;
 use App\Events\ScoreUpdated;
 
 class BotService
 {
     const ROUND_TIME = 30;
+    const WAIT_TIME = 3;
     const HINTS_TIMING = [
         20 => 1,
         10 => 2,
@@ -20,8 +22,15 @@ class BotService
         0 => 1,
     ];
 
+    const STATE_WAITING = 0;
+    const STATE_QUESTION = 1;
+    const STATE_STOPPED = 2;
+
+    public int $state;
+
     private QuestionService $question;
     private MessagesService $messages;
+    private ChatService $chat;
 
     private int $timer;
 
@@ -29,40 +38,67 @@ class BotService
     {
         $this->question = new QuestionService(count(self::HINTS_TIMING));
         $this->messages = new MessagesService;
-        $this->nextQuestion();
+        $this->chat = new ChatService;
+        $this->state = self::STATE_STOPPED;
+        $this->timer = -1;
     }
 
     public function tick()
     {
-        switch ($this->timer) {
-            case 0:
-                $this->noAnswer();
-                break;
-            case (in_array($this->timer, array_keys(self::HINTS_TIMING))):
-                $this->hint(self::HINTS_TIMING[$this->timer]);
-                break;
+        $chatEmpty = $this->chat->isEmpty();
+        if ($chatEmpty && !$this->isStopped()) {
+            $this->stopBot();
+        } elseif (!$chatEmpty && $this->isStopped()) {
+            $this->startBot();
+        } elseif ($this->isWaiting() && $this->timer === 0) {
+            $this->nextQuestion();
+        } elseif ($this->isQuestion() && $this->timer === 0) {
+            $this->noAnswer();
+        } elseif ($this->isQuestion() && in_array($this->timer, array_keys(self::HINTS_TIMING))) {
+            $this->hint(self::HINTS_TIMING[$this->timer]);
         }
         $this->timer--;
     }
 
-    public function noAnswer()
+    public function startBot()
     {
-        $msg = 'Правильный ответ: ' . $this->question->answer . '. Никто не ответил правильно. Переходим к следующему вопросу...';
-        $this->messages->storeSystemMessage($msg);
-        $this->nextQuestion();
+        $this->messages->storeSystemMessage('Добро пожаловать на викторину! Вопросов загружено: ' . $this->question->count());
+        $this->waitTillNextQuestion();
     }
 
-    public function hint(int $hintNum)
+    public function stopBot()
     {
-        $msg = 'Подсказка: ' . $this->question->hints[$hintNum - 1];
+        $this->state = self::STATE_STOPPED;
+        $this->messages->storeSystemMessage('Никого нет в чате. Бот остановлен.');
+    }
+
+    public function waitTillNextQuestion()
+    {
+        $this->state = self::STATE_WAITING;
+        $this->timer = self::WAIT_TIME;
+        $msg = 'Следующий вопрос через ' . $this->timer . ' сек...';
         $this->messages->storeSystemMessage($msg);
     }
 
     public function nextQuestion()
     {
+        $this->state = self::STATE_QUESTION;
         $this->timer = self::ROUND_TIME;
         $this->question->random();
         $msg = 'Внимание, вопрос! ' . $this->question->question;
+        $this->messages->storeSystemMessage($msg);
+    }
+
+    public function noAnswer()
+    {
+        $msg = 'Правильный ответ: ' . $this->question->answer . '. Никто не ответил правильно.';
+        $this->messages->storeSystemMessage($msg);
+        $this->waitTillNextQuestion();
+    }
+
+    public function hint(int $hintNum)
+    {
+        $msg = 'Подсказка: ' . $this->question->hints[$hintNum - 1];
         $this->messages->storeSystemMessage($msg);
     }
 
@@ -72,7 +108,7 @@ class BotService
             $msg = $answer->user->name . ', верно! Ваш ответ "' . $this->question->answer . '" верный!';
             $this->messages->storeSystemMessage($msg);
             $this->awardUser($answer->user->id);
-            $this->nextQuestion();
+            $this->waitTillNextQuestion();
             return true;
         }
         return false;
@@ -98,5 +134,9 @@ class BotService
         }
         return 0;
     }
+
+    private function isStopped() { return $this->state === self::STATE_STOPPED; }
+    private function isWaiting() { return $this->state === self::STATE_WAITING; }
+    private function isQuestion() { return $this->state === self::STATE_QUESTION; }
 
 }

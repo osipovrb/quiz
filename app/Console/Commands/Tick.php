@@ -3,50 +3,34 @@
 namespace App\Console\Commands;
 
 use App\Services\BotService;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Redis;
+use Pusher\Pusher;
 
 class Tick extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'ticker:listen';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Start listening to external ticker';
+    private BotService $bot;
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         parent::__construct();
+        $this->bot = new BotService();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle()
     {
-        $bot = new BotService();
+        $bot = $this->bot;
         Redis::subscribe([env('TIMER_CHANNEL', 'TIMER')], function ($message) use ($bot) {
             if (str_starts_with($message, 'answer:')) {
-                $msg = explode(':', $message, 2)[1];
-                $bot->checkAnswer(json_decode($msg));
+                $answer = explode(':', $message, 2)[1];
+                $bot->checkAnswer(json_decode($answer));
             } else {
                 $bot->tick();
             }
         });
     }
+
 }

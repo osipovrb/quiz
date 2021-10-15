@@ -28,6 +28,11 @@ class QuestionService
         return $this;
     }
 
+    public function count(): int
+    {
+        return Question::count();
+    }
+
     private function loadRandomQuestion()
     {
         $question = Question::inRandomOrder()
