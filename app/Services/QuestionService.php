@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Question;
 use App\Services\HintsService;
-use Illuminate\Support\Facades\Redis;
 
 class QuestionService
 {
@@ -18,7 +17,6 @@ class QuestionService
     public function __construct(int $hintsCount = 2)
     {
         $this->hintsCount = $hintsCount;
-        $this->random();
     }
 
     public function random(): QuestionService
