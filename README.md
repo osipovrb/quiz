@@ -15,20 +15,15 @@ $ sudo apt install php-sqlite3
 ```ini
 exteinsion=pdo_sqlite
 ```
-### .env
-Отредактируйте строки согласно своим настройкам
-```ini
-DB_DATABASE=/absolute/path/to/db.sqlite
-PUSHER_APP_ID=
-PUSHER_APP_KEY=
-PUSHER_APP_SECRET=
-PUSHER_APP_CLUSTER=
-```
 ### Создание БД и компиляция JS
-Создайте БД sqlite:
+Создайте файл БД:
 ```shell
 $ mkdir /absolute/path/to
 $ touch /absolute/path/to/db.sqlite
+```
+В файле .env укажите путь к БД
+```ini
+DB_DATABASE=/absolute/path/to/db.sqlite
 ```
 Запустите миграции
 ```shell
@@ -41,6 +36,10 @@ $ npm run dev
 ### Запуск сервера
 ```shell
 $ php artisan serve
+$ php aritsan queue:listen
+$ php artisan websockets:serve
+$ php artisan ticker:listen
+$ php ./ticker.php
 ```
 Перейдите по адресу http://127.0.0.1:8000
 ### Готово!

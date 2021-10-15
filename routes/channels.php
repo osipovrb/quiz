@@ -17,6 +17,7 @@ use App\Models\User;
 Broadcast::channel('chat', function (User $user) {
     return [
         'id' => $user->id,
-        'name' => $user->name
+        'name' => $user->name,
+        'score' => $user->score,
     ];
 });

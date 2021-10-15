@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Message;
 use App\Events\MessageCreated;
+use Illuminate\Support\Facades\Redis;
 
 class MessageObserver
 {
@@ -11,6 +12,6 @@ class MessageObserver
 
     public function created(Message $message)
     {
-        broadcast(new MessageCreated($message));
+        MessageCreated::dispatch($message);
     }
 }

@@ -16,7 +16,7 @@
         ],
         computed: {
             userIsNull: function() {
-                return (! this.message.user) ? true : false;
+                return (! this.message.user);
             }
         }
     }

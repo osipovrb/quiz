@@ -2156,8 +2156,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['message']
+  props: ['message'],
+  computed: {
+    userIsNull: function userIsNull() {
+      return !this.message.user;
+    }
+  }
 });
 
 /***/ }),
@@ -2293,7 +2299,22 @@ __webpack_require__.r(__webpack_exports__);
       _this.users = _this.users.filter(function (u) {
         return u.id != user.id;
       });
+    }).$on('users.score', function (user) {
+      _this.users.find(function (u) {
+        return u.id === user.id;
+      }).score = user.score;
     });
+  },
+  computed: {
+    sortedUsers: function sortedUsers() {
+      function compare(a, b) {
+        if (a.score > b.score) return -1;
+        if (a.score < b.score) return 1;
+        return 0;
+      }
+
+      return this.users.sort(compare);
+    }
   }
 });
 
@@ -2347,9 +2368,12 @@ window.axios.defaults.headers.common['X-CSRF-TOKEN'] = document.head.querySelect
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "6b9c2ef535766025c6b7",
-  cluster: "eu",
-  forceTLS: true
+  key: "217d928028939e6440805268cb611399",
+  wsHost: window.location.hostname,
+  wsPort: 6001,
+  forceTLS: false,
+  disableStats: true,
+  enabledTransports: ['ws', 'wss']
 });
 
 __webpack_require__(/*! ./chat.js */ "./resources/js/chat.js");
@@ -2374,6 +2398,8 @@ Echo.join('chat').here(function (users) {
   _event__WEBPACK_IMPORTED_MODULE_0__["default"].$emit('users.left', user);
 }).listen('MessageCreated', function (data) {
   _event__WEBPACK_IMPORTED_MODULE_0__["default"].$emit('message.created', data.message);
+}).listen('ScoreUpdated', function (data) {
+  _event__WEBPACK_IMPORTED_MODULE_0__["default"].$emit('users.score', data.user);
 });
 
 /***/ }),
@@ -44904,8 +44930,10 @@ var render = function() {
         _vm._v(_vm._s(_vm.message.created_at))
       ]),
       _vm._v(" "),
-      _c("strong", [_vm._v(_vm._s(_vm.message.user.name))]),
-      _vm._v(":\n        "),
+      _vm.userIsNull
+        ? _c("strong", [_vm._v("Бот: ")])
+        : _c("strong", [_vm._v(_vm._s(_vm.message.user.name) + ": ")]),
+      _vm._v(" "),
       _c("span", { staticClass: "body" }, [_vm._v(_vm._s(_vm.message.body))])
     ])
   ])
@@ -44971,7 +44999,9 @@ var render = function() {
   return _c("li", { staticClass: "list-group-item" }, [
     _c("span", [_vm._v(_vm._s(_vm.user.name))]),
     _vm._v(" "),
-    _c("span", { staticClass: "float-right text-muted" }, [_vm._v("0")])
+    _c("span", { staticClass: "float-right text-muted" }, [
+      _vm._v(_vm._s(_vm.user.score))
+    ])
   ])
 }
 var staticRenderFns = []
@@ -45004,7 +45034,7 @@ var render = function() {
       _c(
         "ul",
         { staticClass: "list-group list-group-flush" },
-        _vm._l(_vm.users, function(user) {
+        _vm._l(_vm.sortedUsers, function(user) {
           return _c("user-component", { key: user.id, attrs: { user: user } })
         }),
         1
