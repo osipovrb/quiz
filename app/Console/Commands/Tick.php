@@ -3,10 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Services\BotService;
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Redis;
-use Pusher\Pusher;
+use Illuminate\Support\Str;
 
 class Tick extends Command
 {
@@ -24,7 +23,7 @@ class Tick extends Command
     {
         $bot = $this->bot;
         Redis::subscribe([env('TIMER_CHANNEL', 'TIMER')], function ($message) use ($bot) {
-            if (str_starts_with($message, 'answer:')) {
+            if (Str::startsWith($message, 'answer:')) {
                 $answer = explode(':', $message, 2)[1];
                 $bot->checkAnswer(json_decode($answer));
             } else {

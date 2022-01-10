@@ -25,7 +25,7 @@ class ChatService
         try {
             $subscribers = $this->pusher->get('/channels/presence-chat/users')->users;
             return (count($subscribers) === 0);
-        } catch(Exception) {
+        } catch (Exception $e) {
             return true; // если к каналу никто не подключен, то вызывается исключение
         }
     }

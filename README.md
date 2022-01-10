@@ -29,18 +29,18 @@ DB_DATABASE=/absolute/path/to/db.sqlite
 ```shell
 $ php artisan migrate --seed
 ```
-Скомпилируйте js
+Соберите js
 ```shell
 $ npm run dev
 ```
 ### Запуск сервера
 ```shell
 $ php artisan serve
-$ php aritsan queue:listen
+$ php artisan queue:listen
 $ php artisan websockets:serve
 $ php artisan ticker:listen
 $ php ./ticker.php
 ```
 Перейдите по адресу http://127.0.0.1:8000
 ### Готово!
-Автор Осипов Алексей, telegram @osipovrb
+tg @osipovrb
